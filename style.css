@@ -1,0 +1,390 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Outfit', sans-serif;
+    background-color: transparent;
+}
+
+/* Tampilan Loading Screen */
+#ar-loader {
+    position: fixed;
+    z-index: 99999;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle at center, #151522 0%, #08080c 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    transition: opacity 0.5s ease-out;
+}
+
+.spinner {
+    border: 3px solid rgba(255, 255, 255, 0.05);
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    border-left-color: #00ffcc;
+    border-top-color: #00ffcc;
+    animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    margin-bottom: 20px;
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.2);
+}
+
+@keyframes spin { 
+    0% { transform: rotate(0deg); } 
+    100% { transform: rotate(360deg); } 
+}
+
+#ar-loader p {
+    font-weight: 400;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    color: #e0e0e0;
+}
+
+/* Tampilan Menu Atas (HUD) */
+#museum-ui {
+    position: absolute;
+    top: 20px; left: 50%;
+    transform: translateX(-50%);
+    width: 85%;
+    max-width: 420px;
+    background: rgba(15, 15, 20, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 16px 20px;
+    border-radius: 16px;
+    z-index: 10000;
+    text-align: center;
+    color: white;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+#museum-ui h2 { 
+    margin: 0 0 6px 0; 
+    font-size: 18px; 
+    font-weight: 600;
+    color: #00ffcc; 
+    letter-spacing: 0.5px;
+}
+#museum-ui p { 
+    margin: 0; 
+    font-size: 13px; 
+    font-weight: 300;
+    color: #d8d8e2; 
+}
+#museum-ui .hint { 
+    margin-top: 8px; 
+    font-size: 11px; 
+    font-weight: 400;
+    color: #ffb800; 
+}
+
+/* Card Notifikasi Saat Lukisan Ditemukan */
+#scan-alert-card {
+    position: fixed;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%) translateY(120%);
+    width: 90%;
+    max-width: 400px;
+    background: rgba(18, 18, 26, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    padding: 14px 18px;
+    z-index: 20000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+    opacity: 0;
+    pointer-events: none;
+}
+
+#scan-alert-card.active {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.card-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.card-thumbnail {
+    width: 48px;
+    height: 64px;
+    border-radius: 6px;
+    object-fit: cover;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.card-text h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.card-text p {
+    margin: 2px 0 0 0;
+    font-size: 12px;
+    color: #00ffcc;
+    font-weight: 500;
+}
+
+.btn-detail {
+    background: linear-gradient(135deg, #00ffcc 0%, #00b8ff 100%);
+    border: none;
+    outline: none;
+    color: #0a0a0f;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 255, 204, 0.3);
+    position: relative;
+    z-index: 21000;
+}
+
+.btn-detail:hover {
+    transform: scale(1.03);
+    box-shadow: 0 6px 16px rgba(0, 255, 204, 0.5);
+}
+
+.btn-detail:active {
+    transform: scale(0.97);
+}
+
+/* Halaman Detail 3D Tetap */
+#detail-view-screen {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 30000;
+    background: #09090d;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(30px);
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+}
+
+#detail-view-screen.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+/* Header Detail */
+.detail-header {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    padding: 20px;
+    z-index: 520;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(to bottom, rgba(9, 9, 13, 0.8) 0%, rgba(9, 9, 13, 0) 100%);
+    pointer-events: none;
+}
+
+.btn-back {
+    pointer-events: auto;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s, border 0.2s;
+}
+
+.btn-back:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.btn-back svg {
+    transition: transform 0.2s ease;
+}
+
+.btn-back:hover svg {
+    transform: translateX(-3px);
+}
+
+/* Viewer Area */
+.detail-viewer-container {
+    width: 100%;
+    height: 48%;
+    background: radial-gradient(circle at center, #20202e 0%, #09090d 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.viewer-hint {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 510;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    color: #cccccc;
+    pointer-events: none;
+    letter-spacing: 0.3px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Info Sheet Area */
+.detail-info-sheet {
+    flex: 1;
+    background: #111116;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px 24px 0 0;
+    padding: 24px;
+    overflow-y: auto;
+    color: #e2e2e9;
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+    margin-top: -20px;
+    position: relative;
+    z-index: 515;
+}
+
+.detail-info-sheet::-webkit-scrollbar {
+    width: 5px;
+}
+.detail-info-sheet::-webkit-scrollbar-track {
+    background: transparent;
+}
+.detail-info-sheet::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.info-title {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+}
+
+.info-subtitle {
+    margin: 4px 0 20px 0;
+    font-size: 14px;
+    color: #00ffcc;
+    font-weight: 500;
+}
+
+/* Grid Meta */
+.info-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.meta-item {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    padding: 10px 14px;
+    border-radius: 10px;
+}
+
+.meta-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #888894;
+    margin-bottom: 3px;
+    font-weight: 600;
+}
+
+.meta-value {
+    font-size: 13px;
+    color: #ffffff;
+    font-weight: 500;
+}
+
+/* Deskripsi */
+.info-desc-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0 0 10px 0;
+    letter-spacing: 0.2px;
+}
+
+.info-desc-text {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #a0a0ab;
+    font-weight: 300;
+    margin: 0 0 15px 0;
+}
+
+/* responsive layout */
+@media (min-width: 768px) {
+    #detail-view-screen {
+        flex-direction: row;
+        overflow: hidden;
+    }
+    
+    .detail-viewer-container {
+        width: 55%;
+        height: 100%;
+    }
+    
+    .detail-info-sheet {
+        width: 45%;
+        height: 100%;
+        border-radius: 0;
+        border-top: none;
+        border-left: 1px solid rgba(255, 255, 255, 0.08);
+        margin-top: 0;
+        padding: 40px;
+        box-shadow: -10px 0 30px rgba(0,0,0,0.3);
+    }
+    
+    .info-title {
+        font-size: 28px;
+        margin-top: 40px;
+    }
+}

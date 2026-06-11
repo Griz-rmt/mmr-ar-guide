@@ -1,0 +1,38 @@
+[
+  {
+    "id": "monalisa",
+    "title": "Mona Lisa (La Gioconda)",
+    "artist": "Leonardo da Vinci",
+    "medium": "Minyak pada panel kayu poplar",
+    "dimensions": "77 cm × 53 cm",
+    "location": "Museum Louvre, Paris",
+    "period": "Renaissance Tinggi",
+    "description": "Mona Lisa adalah salah satu lukisan potret paling terkenal, paling sering dikunjungi, paling banyak ditulis, dan paling banyak diparodikan di dunia. Senyum misterius subjek lukisan ini telah memikat jutaan pengamat selama berabad-abad. Lukisan ini diyakini merupakan potret dari Lisa Gherardini, istri Francesco del Giocondo, seorang pedagang sutra kaya dari Florence, Italia. Teknik 'sfumato' yang digunakan oleh Leonardo da Vinci menciptakan transisi warna yang sangat halus, memberikan efek kedalaman dan ilusi bayangan yang hidup pada wajah subjek, terutama pada sudut mata dan mulutnya.",
+    "imageUrl": "./monalisa.jpg",
+    "nftUrl": "./monalisa"
+  },
+  {
+    "id": "thestarrynight",
+    "title": "The Starry Night",
+    "artist": "Vincent van Gogh",
+    "period": "1889",
+    "medium": "Cat Minyak di Kanvas",
+    "dimensions": "73.7 cm x 92.1 cm",
+    "location": "Museum of Modern Art, New York City",
+    "description": "The Starry Night adalah sebuah lukisan cat minyak di kanvas karya pelukis pasca-Impresionis Belanda, Vincent van Gogh. Dilukis pada Juni 1889, lukisan tersebut menggambarkan pemandangan dari jendela yang menghadap ke arah timur dari kamar rumah sakit jiwanya di Saint-Rémy-de-Provence, tepat sebelum matahari terbit, dengan tambahan sebuah desa yang diidealkan.",
+    "imageUrl": "https://mqytpjnmcwiulsjs.public.blob.vercel-storage.com/paintings/thestarrynight/target.jpg",
+    "nftUrl": "https://mqytpjnmcwiulsjs.public.blob.vercel-storage.com/paintings/thestarrynight/target"
+  },
+  {
+    "id": "thescream",
+    "title": "The Scream",
+    "artist": "Edward Munch",
+    "period": "1893",
+    "medium": "minyak, tempera, dan pastel di atas karton",
+    "dimensions": "91 cm x 73,5 cm",
+    "location": "National Museum",
+    "description": "The Scream adalah komposisi seni yang diciptakan oleh seniman Norwegia Edvard Munch pada tahun 1893. Nama Norwegia untuk karya ini adalah Skrik ('Jeritan'), dan judul Jerman yang pertama kali dipamerkan adalah Der Schrei der Natur ('Jeritan Alam'). Wajah yang tersiksa dalam lukisan tersebut telah menjadi salah satu gambar paling ikonik dalam seni, yang dipandang sebagai representasi pengalaman mendalam tentang ketakutan eksistensial yang terkait dengan kondisi manusia. Karya Munch, termasuk The Scream, memiliki pengaruh yang membentuk gerakan Ekspresionis",
+    "imageUrl": "https://mqytpjnmcwiulsjs.public.blob.vercel-storage.com/paintings/thescream/target.jpg",
+    "nftUrl": "https://mqytpjnmcwiulsjs.public.blob.vercel-storage.com/paintings/thescream/target"
+  }
+]

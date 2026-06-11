@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Museum AR - Admin Panel</title>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #09090d 0%, #171725 100%) !important;
+            overflow-y: auto !important;
+            color: #ffffff;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
+        .admin-container {
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .admin-header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .admin-header h1 span {
+            color: #00ffcc;
+        }
+
+        .admin-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #888894;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            color: #ffffff;
+            font-family: 'Outfit', sans-serif;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: #00ffcc;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* File Upload Styling */
+        .file-upload-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        @media (min-width: 500px) {
+            .file-upload-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .file-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px dashed rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            position: relative;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .file-box:hover {
+            border-color: #00ffcc;
+            background: rgba(0, 255, 204, 0.02);
+        }
+
+        .file-box input[type="file"] {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-box-text {
+            font-size: 12px;
+            color: #a0a0ab;
+            pointer-events: none;
+        }
+
+        .file-box-text strong {
+            display: block;
+            color: #ffffff;
+            margin-bottom: 4px;
+            font-size: 13px;
+        }
+
+        .file-box-selected {
+            border-style: solid;
+            border-color: #00ffcc;
+            background: rgba(0, 255, 204, 0.05);
+        }
+
+        .file-box-selected .file-box-text strong {
+            color: #00ffcc;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(135deg, #00ffcc 0%, #00b8ff 100%);
+            color: #0a0a0f;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(0, 255, 204, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 255, 204, 0.5);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .btn-submit:disabled {
+            background: #252530;
+            color: #666670;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        /* Loading Spinner */
+        .spinner-btn {
+            border: 2px solid rgba(0,0,0,0.1);
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            border-left-color: #0a0a0f;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        /* Progress Card */
+        #progress-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        #progress-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .progress-card {
+            background: #12121a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px 30px;
+            width: 90%;
+            max-width: 420px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+        }
+
+        .progress-card h3 {
+            margin: 0 0 20px 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .progress-step {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+
+        .step-name {
+            color: #a0a0ab;
+        }
+
+        .step-status {
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .status-waiting { color: #555560; }
+        .status-uploading { color: #ffb800; }
+        .status-done { color: #00ffcc; }
+        .status-error { color: #ff3b30; }
+    </style>
+</head>
+<body>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>Panel Admin <span>Museum AR</span></h1>
+            <button class="btn-back" onclick="window.location.href='/'">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Kembali ke Kamera
+            </button>
+        </div>
+
+        <div class="admin-card">
+            <form id="upload-form">
+                <!-- Metadata Form -->
+                <div class="form-group">
+                    <label for="title">Judul Lukisan</label>
+                    <input type="text" id="title" required placeholder="Contoh: The Starry Night">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="artist">Seniman / Pelukis</label>
+                        <input type="text" id="artist" required placeholder="Contoh: Vincent van Gogh">
+                    </div>
+                    <div class="form-group">
+                        <label for="period">Periode / Era</label>
+                        <input type="text" id="period" required placeholder="Contoh: Post-Impressionism">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="medium">Medium Lukisan</label>
+                        <input type="text" id="medium" required placeholder="Contoh: Cat minyak pada kanvas">
+                    </div>
+                    <div class="form-group">
+                        <label for="dimensions">Dimensi Fisik</label>
+                        <input type="text" id="dimensions" required placeholder="Contoh: 73.7 cm × 92.1 cm">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Lokasi Galeri / Museum</label>
+                    <input type="text" id="location" required placeholder="Contoh: MoMA, New York">
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Deskripsi Sejarah</label>
+                    <textarea id="description" required placeholder="Tuliskan latar belakang sejarah dan deskripsi mengenai lukisan ini..."></textarea>
+                </div>
+
+                <!-- File Picker Grid -->
+                <div class="form-group">
+                    <label>Aset File Lukisan & Tracking NFT</label>
+                    <div class="file-upload-grid">
+                        <div class="file-box" id="box-image">
+                            <input type="file" id="file-image" accept="image/jpeg,image/png" required>
+                            <div class="file-box-text">
+                                <strong id="lbl-image">Gambar Pratinjau (.jpg/.png)</strong>
+                                <span>Pilih gambar digital lukisan</span>
+                            </div>
+                        </div>
+
+                        <div class="file-box" id="box-fset">
+                            <input type="file" id="file-fset" accept=".fset" required>
+                            <div class="file-box-text">
+                                <strong id="lbl-fset">File Target NFT (.fset)</strong>
+                                <span>Pilih berkas descriptor fset</span>
+                            </div>
+                        </div>
+
+                        <div class="file-box" id="box-fset3">
+                            <input type="file" id="file-fset3" accept=".fset3" required>
+                            <div class="file-box-text">
+                                <strong id="lbl-fset3">File Target NFT (.fset3)</strong>
+                                <span>Pilih berkas descriptor fset3</span>
+                            </div>
+                        </div>
+
+                        <div class="file-box" id="box-iset">
+                            <input type="file" id="file-iset" accept=".iset" required>
+                            <div class="file-box-text">
+                                <strong id="lbl-iset">File Target NFT (.iset)</strong>
+                                <span>Pilih berkas descriptor iset</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-submit" id="btn-submit">
+                    <div class="spinner-btn" id="btn-spinner"></div>
+                    <span>Unggah & Simpan Lukisan</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Progress Overlay -->
+    <div id="progress-overlay">
+        <div class="progress-card">
+            <h3>Mengunggah Aset ke Vercel Blob</h3>
+            
+            <div class="progress-step">
+                <span class="step-name">1. Gambar Pratinjau (.jpg/.png)</span>
+                <span class="step-status status-waiting" id="status-image">Menunggu...</span>
+            </div>
+            <div class="progress-step">
+                <span class="step-name">2. File Tracking (.fset)</span>
+                <span class="step-status status-waiting" id="status-fset">Menunggu...</span>
+            </div>
+            <div class="progress-step">
+                <span class="step-name">3. File Tracking (.fset3)</span>
+                <span class="step-status status-waiting" id="status-fset3">Menunggu...</span>
+            </div>
+            <div class="progress-step">
+                <span class="step-name">4. File Tracking (.iset)</span>
+                <span class="step-status status-waiting" id="status-iset">Menunggu...</span>
+            </div>
+            <div class="progress-step" style="border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px; margin-top: 10px;">
+                <span class="step-name" style="color: #ffffff; font-weight: 500;">5. Menyimpan Ke Database</span>
+                <span class="step-status status-waiting" id="status-db">Menunggu...</span>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import fungsi client upload Vercel Blob menggunakan esm.sh CDN
+        import { upload } from 'https://esm.sh/@vercel/blob/client';
+
+        // Event listener saat file dipilih untuk memperbarui tampilan input
+        const fileInputs = ['image', 'fset', 'fset3', 'iset'];
+        fileInputs.forEach(type => {
+            const input = document.getElementById(`file-${type}`);
+            const box = document.getElementById(`box-${type}`);
+            const label = document.getElementById(`lbl-${type}`);
+            const defaultLabel = label.textContent;
+
+            input.addEventListener('change', (e) => {
+                if (input.files.length > 0) {
+                    box.classList.add('file-box-selected');
+                    label.textContent = input.files[0].name;
+                } else {
+                    box.classList.remove('file-box-selected');
+                    label.textContent = defaultLabel;
+                }
+            });
+        });
+
+        // Handler pengiriman form
+        document.getElementById('upload-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const title = document.getElementById('title').value.trim();
+            const artist = document.getElementById('artist').value.trim();
+            const period = document.getElementById('period').value.trim();
+            const medium = document.getElementById('medium').value.trim();
+            const dimensions = document.getElementById('dimensions').value.trim();
+            const location = document.getElementById('location').value.trim();
+            const description = document.getElementById('description').value.trim();
+
+            const fileImg = document.getElementById('file-image').files[0];
+            const fileFset = document.getElementById('file-fset').files[0];
+            const fileFset3 = document.getElementById('file-fset3').files[0];
+            const fileIset = document.getElementById('file-iset').files[0];
+
+            // Buat ID unik berdasarkan nama lukisan
+            const paintingId = title.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+            if (!paintingId) {
+                alert('Nama lukisan tidak valid untuk dibuatkan ID.');
+                return;
+            }
+
+            // Dapatkan ekstensi file gambar
+            const imgExt = fileImg.name.split('.').pop();
+
+            // Aktifkan progress panel
+            const overlay = document.getElementById('progress-overlay');
+            const submitBtn = document.getElementById('btn-submit');
+            const spinner = document.getElementById('btn-spinner');
+
+            overlay.classList.add('active');
+            submitBtn.disabled = true;
+            spinner.style.display = 'block';
+
+            const uploadConfig = {
+                access: 'public',
+                handleUploadUrl: '/api/upload'
+            };
+
+            try {
+                // 1. Upload Gambar
+                updateStatus('image', 'uploading', 'Mengunggah...');
+                const imageBlob = await upload(`paintings/${paintingId}/target.${imgExt}`, fileImg, uploadConfig);
+                updateStatus('image', 'done', 'Selesai');
+
+                // 2. Upload file .fset
+                updateStatus('fset', 'uploading', 'Mengunggah...');
+                const fsetBlob = await upload(`paintings/${paintingId}/target.fset`, fileFset, uploadConfig);
+                updateStatus('fset', 'done', 'Selesai');
+
+                // 3. Upload file .fset3
+                updateStatus('fset3', 'uploading', 'Mengunggah...');
+                const fset3Blob = await upload(`paintings/${paintingId}/target.fset3`, fileFset3, uploadConfig);
+                updateStatus('fset3', 'done', 'Selesai');
+
+                // 4. Upload file .iset
+                updateStatus('iset', 'uploading', 'Mengunggah...');
+                const isetBlob = await upload(`paintings/${paintingId}/target.iset`, fileIset, uploadConfig);
+                updateStatus('iset', 'done', 'Selesai');
+
+                // 5. Simpan metadata ke API paintings.json
+                updateStatus('db', 'uploading', 'Menyimpan...');
+
+                // Bentuk URL basis untuk NFT (hilangkan ekstensi .fset dari URL .fset)
+                const nftBaseUrl = fsetBlob.url.replace(/\.fset$/, '');
+
+                const newPaintingData = {
+                    id: paintingId,
+                    title: title,
+                    artist: artist,
+                    period: period,
+                    medium: medium,
+                    dimensions: dimensions,
+                    location: location,
+                    description: description,
+                    imageUrl: imageBlob.url,
+                    nftUrl: nftBaseUrl
+                };
+
+                const dbResponse = await fetch('/api/paintings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newPaintingData)
+                });
+
+                if (!dbResponse.ok) {
+                    const dbErr = await dbResponse.json();
+                    throw new Error(dbErr.error || 'Gagal menyimpan ke database JSON.');
+                }
+
+                updateStatus('db', 'done', 'Selesai');
+                
+                alert('Lukisan berhasil ditambahkan!');
+                window.location.href = '/';
+
+            } catch (error) {
+                console.error(error);
+                alert('Proses unggah gagal: ' + error.message);
+                
+                // Reset UI
+                overlay.classList.remove('active');
+                submitBtn.disabled = false;
+                spinner.style.display = 'none';
+                
+                // Set status error
+                const steps = ['image', 'fset', 'fset3', 'iset', 'db'];
+                steps.forEach(s => {
+                    const el = document.getElementById(`status-${s}`);
+                    if (el.classList.contains('status-uploading') || el.classList.contains('status-waiting')) {
+                        el.textContent = 'Gagal';
+                        el.className = 'step-status status-error';
+                    }
+                });
+            }
+        });
+
+        function updateStatus(step, type, text) {
+            const el = document.getElementById(`status-${step}`);
+            el.textContent = text;
+            el.className = `step-status status-${type}`;
+        }
+    </script>
+</body>
+</html>
