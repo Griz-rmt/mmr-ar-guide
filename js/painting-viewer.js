@@ -158,11 +158,18 @@ class PaintingViewer {
         this.camera.updateProjectionMatrix();
     }
 
+    /** @private Menghitung jarak antara dua sentuhan jari untuk pinch-zoom */
+    _getPinchDist(e) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
     /** @private Mendaftarkan event listener untuk drag dan zoom */
     _bindEvents() {
         const el = this.renderer.domElement;
 
-        // Mouse drag
+        // Mouse drag (untuk desktop click & drag)
         el.addEventListener('mousedown', (e) => {
             this.isDragging = true;
             this.prevX = e.clientX;
@@ -180,15 +187,26 @@ class PaintingViewer {
             this.prevY = e.clientY;
         });
 
-        // Touch drag
+        // Touch drag & pinch zoom (Mendukung navigasi 1 jari untuk rotasi & 2 jari untuk zoom cubit)
         el.addEventListener('touchstart', (e) => {
             if (e.touches.length === 1) {
                 this.isDragging = true;
+                this.isPinching = false;
                 this.prevX = e.touches[0].clientX;
                 this.prevY = e.touches[0].clientY;
+            } else if (e.touches.length === 2) {
+                this.isDragging = false;
+                this.isPinching = true;
+                this.initialPinchDist = this._getPinchDist(e);
+                this.initialZoom = this.zoomLevel;
             }
         }, { passive: true });
-        el.addEventListener('touchend', () => { this.isDragging = false; }, { passive: true });
+
+        el.addEventListener('touchend', () => { 
+            this.isDragging = false; 
+            this.isPinching = false;
+        }, { passive: true });
+
         el.addEventListener('touchmove', (e) => {
             if (this.isDragging && e.touches.length === 1) {
                 const dx = e.touches[0].clientX - this.prevX;
@@ -198,10 +216,19 @@ class PaintingViewer {
                 this.rotationX = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, this.rotationX));
                 this.prevX = e.touches[0].clientX;
                 this.prevY = e.touches[0].clientY;
+            } else if (this.isPinching && e.touches.length === 2) {
+                const currentDist = this._getPinchDist(e);
+                if (this.initialPinchDist > 0) {
+                    // Jika cubitan melebar (zoom in), factor < 1, maka zoomLevel mengecil (mendekat)
+                    const factor = this.initialPinchDist / currentDist;
+                    this.zoomLevel = this.initialZoom * factor;
+                    this.zoomLevel = Math.max(2, Math.min(10, this.zoomLevel));
+                    this.camera.position.z = this.zoomLevel;
+                }
             }
         }, { passive: true });
 
-        // Scroll zoom
+        // Scroll zoom (untuk scroll mouse desktop)
         el.addEventListener('wheel', (e) => {
             e.preventDefault();
             this.zoomLevel += e.deltaY * 0.005;

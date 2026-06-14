@@ -13,6 +13,45 @@ let lostTimeout;
 // Mengambil data lukisan dari API dan membuat A-Frame scene secara dinamis
 // ===================================================================
 
+// Helper untuk menghasilkan gambar tombol Detail 3D secara dinamis menggunakan Canvas
+function createButtonTexture(text) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 256;
+    canvas.height = 128;
+    const ctx = canvas.getContext('2d');
+
+    // Gradien Latar Belakang (Cyan ke Biru, senada dengan UI)
+    const gradient = ctx.createLinearGradient(0, 0, 256, 128);
+    gradient.addColorStop(0, '#00ffcc');
+    gradient.addColorStop(1, '#00b8ff');
+
+    // Menggambar rounded rectangle
+    ctx.fillStyle = gradient;
+    const radius = 24;
+    const x = 10, y = 15, w = 236, h = 98;
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + w - radius, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+    ctx.lineTo(x + w, y + h - radius);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+    ctx.lineTo(x + radius, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+    ctx.fill();
+
+    // Gaya teks
+    ctx.fillStyle = '#0a0a0f';
+    ctx.font = 'bold 30px "Outfit", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, 128, 64);
+
+    return canvas.toDataURL();
+}
+
 async function initAR() {
     // Referensi elemen UI (diambil di sini karena DOM sudah siap)
     const alertCard = document.getElementById('scan-alert-card');
@@ -43,17 +82,53 @@ async function initAR() {
             nft.setAttribute('smoothTolerance', '.01');
             nft.setAttribute('smoothThreshold', '5');
 
+            // Gambar Pratinjau Lukisan (diletakkan tepat di depan lukisan asli, sedikit melayang Y=2)
+            // Diberi warna abu-abu gelap (color="#777777") untuk efek redup/dim di belakang tombol
             const img = document.createElement('a-image');
             img.setAttribute('src', painting.imageUrl);
-            img.setAttribute('position', '75 250 0');
+            img.setAttribute('position', '75 2 -110'); // Tengah dari ukuran 150x220
             img.setAttribute('rotation', '-90 0 0');
             img.setAttribute('width', '150');
             img.setAttribute('height', '220');
+            img.setAttribute('color', '#777777'); // Efek dim (gelap) pada gambar
             img.setAttribute('class', 'clickable');
             img.setAttribute('gesture-handler', '');
 
+            // Tombol Detail 3D (diletakkan tepat di tengah gambar pratinjau, sedikit di depannya Y=3)
+            const btn = document.createElement('a-image');
+            btn.setAttribute('src', createButtonTexture('Detail >'));
+            btn.setAttribute('position', '75 3 -110'); // Tengah dari gambar
+            btn.setAttribute('rotation', '-90 0 0');
+            btn.setAttribute('width', '60');
+            btn.setAttribute('height', '30');
+            btn.setAttribute('class', 'clickable');
+
             nft.appendChild(img);
+            nft.appendChild(btn);
             scene.appendChild(nft);
+
+            // Handler Klik untuk beralih ke Halaman Detail
+            img.addEventListener('click', () => {
+                // Hanya proses klik jika target NFT ini benar-benar sedang terdeteksi/terlihat oleh kamera
+                if (!nft.object3D || !nft.object3D.visible) {
+                    console.log('[AR] Mengabaikan klik pada gambar yang tidak terlihat:', painting.title);
+                    return;
+                }
+                console.log('[AR] Lukisan diketuk:', painting.title);
+                document.getElementById('btn-show-detail').setAttribute('data-painting-id', painting.id);
+                openDetailView();
+            });
+
+            btn.addEventListener('click', () => {
+                // Hanya proses klik jika target NFT ini benar-benar sedang terdeteksi/terlihat oleh kamera
+                if (!nft.object3D || !nft.object3D.visible) {
+                    console.log('[AR] Mengabaikan klik pada tombol yang tidak terlihat:', painting.title);
+                    return;
+                }
+                console.log('[AR] Tombol Detail diketuk:', painting.title);
+                document.getElementById('btn-show-detail').setAttribute('data-painting-id', painting.id);
+                openDetailView();
+            });
 
             // Event deteksi lukisan
             nft.addEventListener('markerFound', () => {
@@ -78,9 +153,11 @@ async function initAR() {
             });
         });
 
-        // Tambahkan Kamera
+        // Tambahkan Kamera dengan Cursor dan Raycaster (agar presisi dalam melacak klik layar ke objek 3D)
         const camera = document.createElement('a-entity');
         camera.setAttribute('camera', '');
+        camera.setAttribute('cursor', 'rayOrigin: mouse; fuse: false;');
+        camera.setAttribute('raycaster', 'objects: .clickable');
         scene.appendChild(camera);
 
         // Masukkan scene ke body
@@ -161,6 +238,12 @@ function openDetailView() {
     alertCard.classList.remove('active');
     museumUi.style.opacity = '0';
 
+    // Pastikan bottom sheet dalam keadaan terbuka (expanded) saat baru masuk
+    const infoSheet = document.querySelector('.detail-info-sheet');
+    if (infoSheet) {
+        infoSheet.classList.remove('collapsed');
+    }
+
     // Matikan streaming webcam untuk menghemat baterai
     const video = document.querySelector('body > video');
     if (video) {
@@ -203,17 +286,26 @@ function closeDetailView() {
 }
 
 // ===================================================================
-// CAPTURE-PHASE TOUCH HANDLING
+// CAPTURE-PHASE TOUCH HANDLING & BOTTOM SHEET GESTURES
 // A-Frame memasang touch listeners di window level yang mencegat
 // semua touch events. Solusi: tangkap di document level dengan
 // capture:true + stopImmediatePropagation agar A-Frame tidak bisa
-// mengintervensi sentuhan pada tombol UI.
+// mengintervensi sentuhan pada tombol UI & drag handle bottom sheet.
 // ===================================================================
+
+let dragStartY = 0;
 
 document.addEventListener('touchstart', function (e) {
     const detailBtn = e.target.closest('#btn-show-detail');
+    const dragHandle = e.target.closest('.sheet-drag-handle-container');
+    
     if (detailBtn) {
         e.stopImmediatePropagation();
+        return;
+    }
+    if (dragHandle) {
+        e.stopImmediatePropagation();
+        dragStartY = e.touches[0].clientY;
         return;
     }
     const backBtn = e.target.closest('#btn-back');
@@ -225,11 +317,37 @@ document.addEventListener('touchstart', function (e) {
 
 document.addEventListener('touchend', function (e) {
     const detailBtn = e.target.closest('#btn-show-detail');
+    const dragHandle = e.target.closest('.sheet-drag-handle-container');
+    
     if (detailBtn) {
         e.stopImmediatePropagation();
         e.preventDefault();
         console.log('[UI] Tombol Detail ditekan (touchend capture)');
         openDetailView();
+        return;
+    }
+    if (dragHandle) {
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        const endY = e.changedTouches[0].clientY;
+        const diffY = endY - dragStartY;
+        const infoSheetEl = document.querySelector('.detail-info-sheet');
+
+        if (infoSheetEl) {
+            if (Math.abs(diffY) < 10) {
+                // Ketukan singkat (tap) -> toggle collapse/expand
+                infoSheetEl.classList.toggle('collapsed');
+                console.log('[UI] Drag handle diklik/tap (toggle)');
+            } else if (diffY > 40) {
+                // Geser ke bawah -> collapse
+                infoSheetEl.classList.add('collapsed');
+                console.log('[UI] Drag handle digeser ke bawah (collapse)');
+            } else if (diffY < -40) {
+                // Geser ke atas -> expand
+                infoSheetEl.classList.remove('collapsed');
+                console.log('[UI] Drag handle digeser ke atas (expand)');
+            }
+        }
         return;
     }
     const backBtn = e.target.closest('#btn-back');
@@ -245,3 +363,13 @@ document.addEventListener('touchend', function (e) {
 // Fallback click untuk desktop
 btnShowDetail.addEventListener('click', openDetailView);
 btnBack.addEventListener('click', closeDetailView);
+
+const desktopDragHandle = document.querySelector('.sheet-drag-handle-container');
+if (desktopDragHandle) {
+    desktopDragHandle.addEventListener('click', () => {
+        const infoSheetEl = document.querySelector('.detail-info-sheet');
+        if (infoSheetEl) {
+            infoSheetEl.classList.toggle('collapsed');
+        }
+    });
+}

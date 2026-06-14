@@ -1,17 +1,5 @@
 [
   {
-    "id": "monalisa",
-    "title": "Mona Lisa (La Gioconda)",
-    "artist": "Leonardo da Vinci",
-    "medium": "Minyak pada panel kayu poplar",
-    "dimensions": "77 cm × 53 cm",
-    "location": "Museum Louvre, Paris",
-    "period": "Renaissance Tinggi",
-    "description": "Mona Lisa adalah salah satu lukisan potret paling terkenal, paling sering dikunjungi, paling banyak ditulis, dan paling banyak diparodikan di dunia. Senyum misterius subjek lukisan ini telah memikat jutaan pengamat selama berabad-abad. Lukisan ini diyakini merupakan potret dari Lisa Gherardini, istri Francesco del Giocondo, seorang pedagang sutra kaya dari Florence, Italia. Teknik 'sfumato' yang digunakan oleh Leonardo da Vinci menciptakan transisi warna yang sangat halus, memberikan efek kedalaman dan ilusi bayangan yang hidup pada wajah subjek, terutama pada sudut mata dan mulutnya.",
-    "imageUrl": "./monalisa.jpg",
-    "nftUrl": "./monalisa"
-  },
-  {
     "id": "thestarrynight",
     "title": "The Starry Night",
     "artist": "Vincent van Gogh",
@@ -34,5 +22,29 @@
     "description": "The Scream adalah komposisi seni yang diciptakan oleh seniman Norwegia Edvard Munch pada tahun 1893. Nama Norwegia untuk karya ini adalah Skrik ('Jeritan'), dan judul Jerman yang pertama kali dipamerkan adalah Der Schrei der Natur ('Jeritan Alam'). Wajah yang tersiksa dalam lukisan tersebut telah menjadi salah satu gambar paling ikonik dalam seni, yang dipandang sebagai representasi pengalaman mendalam tentang ketakutan eksistensial yang terkait dengan kondisi manusia. Karya Munch, termasuk The Scream, memiliki pengaruh yang membentuk gerakan Ekspresionis",
     "imageUrl": "https://mqytpjnmcwiulsjs.public.blob.vercel-storage.com/paintings/thescream/target.jpg",
     "nftUrl": "https://mqytpjnmcwiulsjs.public.blob.vercel-storage.com/paintings/thescream/target"
+  },
+  {
+    "id": "monalisalagioconda",
+    "title": "Mona Lisa (La Gioconda)",
+    "artist": "Leonarno da Vinci",
+    "period": "1504",
+    "medium": "Minyak pada panel kayu poplar",
+    "dimensions": "77 cm x 53 cm",
+    "location": "Renaissance Tinggi",
+    "description": "Mona Lisa adalah salah satu lukisan potret paling terkenal, paling sering dikunjungi, paling banyak ditulis, dan paling banyak diparodikan di dunia. Senyum misterius subjek lukisan ini telah memikat jutaan pengamat selama berabad-abad. Lukisan ini diyakini merupakan potret dari Lisa Gherardini, istri Francesco del Gioconda, seorang pedagang sutra kaya dari Florence, Italia. Teknik 'sfumato' yang digunakan oleh Leonardo da Vinci menciptakan transisi warna yang sangat halus, memberikan efek kedalaman dan ilusi bayangan yang hidup pada wajah subjek, terutama pada sudut mata dan mulutnya.",
+    "imageUrl": "https://mqytpjnmcwiulsjs.public.blob.vercel-storage.com/paintings/monalisalagioconda/target.jpg",
+    "nftUrl": "https://mqytpjnmcwiulsjs.public.blob.vercel-storage.com/paintings/monalisalagioconda/target"
+  },
+  {
+    "id": "barong",
+    "title": "Barong",
+    "artist": "Rusli",
+    "period": "1963",
+    "medium": "Cat minyak pada canvas",
+    "dimensions": "65 cm x 85 cm",
+    "location": "Sidharta",
+    "description": "Lukisan “Barong” karya Rusli merupakan karya seni modern Indonesia yang mengangkat simbol budaya dan spiritualitas Bali melalui sosok Barong sebagai lambang kebaikan dan pelindung. Lukisan ini menampilkan gaya ekspresionis dengan penggunaan warna yang dinamis serta sapuan kuas yang spontan, sehingga menciptakan suasana mistis dan emosional. Melalui karya ini, Rusli berhasil memadukan unsur tradisional Nusantara dengan pendekatan seni modern yang penuh nilai artistik dan filosofi budaya.",
+    "imageUrl": "https://mqytpjnmcwiulsjs.public.blob.vercel-storage.com/paintings/barong/target.jpg",
+    "nftUrl": "https://mqytpjnmcwiulsjs.public.blob.vercel-storage.com/paintings/barong/target"
   }
 ]
