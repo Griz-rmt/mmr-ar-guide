@@ -445,3 +445,258 @@ body, html {
     }
 }
 }
+
+/* ===================================================================
+   ADMIN PANEL STYLES
+   =================================================================== */
+
+.admin-body {
+    background: linear-gradient(135deg, #09090d 0%, #171725 100%) !important;
+    overflow-y: auto !important;
+    color: #ffffff;
+    padding: 40px 20px;
+    box-sizing: border-box;
+}
+
+.admin-container {
+    max-width: 650px;
+    margin: 0 auto;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.admin-header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.admin-header h1 span {
+    color: #00ffcc;
+}
+
+.admin-card {
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.admin-body label {
+    display: block;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #888894;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.admin-body input[type="text"], .admin-body textarea {
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    color: #ffffff;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.admin-body input[type="text"]:focus, .admin-body textarea:focus {
+    outline: none;
+    border-color: #00ffcc;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.admin-body textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* File Upload Styling */
+.file-upload-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+@media (min-width: 500px) {
+    .file-upload-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.file-box {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px dashed rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.file-box:hover {
+    border-color: #00ffcc;
+    background: rgba(0, 255, 204, 0.02);
+}
+
+.file-box input[type="file"] {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.file-box-text {
+    font-size: 12px;
+    color: #a0a0ab;
+    pointer-events: none;
+}
+
+.file-box-text strong {
+    display: block;
+    color: #ffffff;
+    margin-bottom: 4px;
+    font-size: 13px;
+}
+
+.file-box-selected {
+    border-style: solid;
+    border-color: #00ffcc;
+    background: rgba(0, 255, 204, 0.05);
+}
+
+.file-box-selected .file-box-text strong {
+    color: #00ffcc;
+}
+
+.btn-submit {
+    width: 100%;
+    background: linear-gradient(135deg, #00ffcc 0%, #00b8ff 100%);
+    color: #0a0a0f;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 10px;
+    box-shadow: 0 4px 15px rgba(0, 255, 204, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 255, 204, 0.5);
+}
+
+.btn-submit:active {
+    transform: translateY(0);
+}
+
+.btn-submit:disabled {
+    background: #252530;
+    color: #666670;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+/* Loading Spinner */
+.spinner-btn {
+    border: 2px solid rgba(0,0,0,0.1);
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border-left-color: #0a0a0f;
+    animation: spin 0.8s linear infinite;
+    display: none;
+}
+
+/* Progress Card */
+#progress-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+#progress-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.progress-card {
+    background: #12121a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 25px 30px;
+    width: 90%;
+    max-width: 420px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+}
+
+.progress-card h3 {
+    margin: 0 0 20px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.progress-step {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 13px;
+}
+
+.step-name {
+    color: #a0a0ab;
+}
+
+.step-status {
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.status-waiting { color: #555560; }
+.status-uploading { color: #ffb800; }
+.status-done { color: #00ffcc; }
+.status-error { color: #ff3b30; }
